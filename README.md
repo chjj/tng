@@ -2,8 +2,6 @@
 
 A full-featured PNG renderer for the terminal, built for [blessed][blessed].
 
-![tng](https://raw.githubusercontent.com/chjj/blessed/master/img/demo.png)
-
 Convert any `.png` file (or `.gif`, see below) to an ANSI image and display it
 as an element or ANSI text.
 
@@ -21,6 +19,46 @@ to give the image more detail in the terminal.
 internally converted to bitmaps and fed to the PNG renderer). Any other image
 format is support only if the user has imagemagick (`convert` and `identify`)
 installed.
+
+
+## Example
+
+``` js
+var tng = require('tng');
+
+var img = tng(process.env.HOME + '/helloworld.png', {
+  // less memory on animation (handle blending and dispose while rendering):
+  optimization: 'mem',
+  // add ascii characters for more detail (similar to libcaca):
+  ascii: true,
+  // scale image to 20%:
+  cellmapScale: 0.20,
+  // OR:
+  // ensure a width of 30 cells, maintains aspect ratio:
+  // cellmapWidth: 30,
+  // OR:
+  // ensure a height of 10 cells, maintains aspect ratio:
+  // cellmapHeight: 10
+});
+
+if (img.frames) {
+  img.play(function render(bmp, cellmap) {
+    // Executed on each frame:
+    var ansi = img.renderANSI(cellmap);
+    process.stdout.write('\x1b[H\x1b[J');
+    process.stdout.write(ansi + '\n');
+  });
+  setTimeout(function() {
+    img.pause();
+    setTimeout(function() {
+      img.play();
+    }, 2000);
+  }, 3000);
+} else {
+  var ansi = img.renderANSI(img.cellmap);
+  process.stdout.write(ansi + '\n');
+}
+```
 
 
 ## Contribution and License Agreement
