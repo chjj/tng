@@ -61,6 +61,15 @@ if (img.frames) {
 ```
 
 
+### Test Output
+
+``` bash
+$ cd ./tng
+$ node test test/apng/spinfox.png
+$ node test full test/png/*
+```
+
+
 ## Contribution and License Agreement
 
 If you contribute code to this project, you are implicitly allowing your code
