@@ -76,7 +76,11 @@ function render(file) {
     var img = PNG(file, {
       log: debug,
       ascii: argv.ascii,
-      optimization: argv.locpu ? 'cpu' : 'mem'
+      optimization: argv.locpu ? 'cpu' : 'mem',
+      cellmapScale: argv.scale,
+      cellmapWidth: argv.width,
+      cellmapHeight: argv.height,
+      speed: argv.speed
     });
     img.testOutput();
   } catch (e) {
@@ -121,14 +125,22 @@ function debug() {
  * Execute
  */
 
-var argv = ['ascii', 'locpu', 'rand', 'feh', 'i', 'all', 'full'].reduce(function(argv, arg) {
-  var i = process.argv.indexOf(arg);
-  if (~i) {
-    argv[arg] = true;
-    process.argv.splice(i, 1);
+var argv = {};
+
+process.argv = process.argv.map(function(arg, i) {
+  if (~arg.indexOf('=')) {
+    arg = arg.split('=');
+    if (/^[0-9.]+$/.test(arg[1])) arg[1] = +arg[1];
+    argv[arg[0].replace(/^-+/, '')] = arg[1];
+    return;
   }
-  return argv;
-}, {});
+  if (arg.indexOf('--') === 0) {
+    arg = arg.slice(2);
+    argv[arg] = true;
+    return;
+  }
+  return arg;
+}).filter(Boolean);
 
 var defaultFile = __dirname + '/misc/qr.png';
 var file = defaultFile;
