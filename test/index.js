@@ -148,10 +148,10 @@ function curl(url) {
 var argv = {};
 
 process.argv = process.argv.map(function(arg, i) {
-  if (~arg.indexOf('=')) {
+  if (/^--\w+=/.test(arg)) {
     arg = arg.split('=');
     if (/^[0-9.]+$/.test(arg[1])) arg[1] = +arg[1];
-    argv[arg[0].replace(/^-+/, '')] = arg[1];
+    argv[arg[0].replace(/^--/, '')] = arg[1];
     return;
   }
   if (arg.indexOf('--') === 0) {
@@ -242,7 +242,7 @@ if (argv.all) {
       file = pngs[i++];
     }
     if (!file) return;
-    console.log(file);
+    if (typeof file === 'string') console.log(file);
     if (/^https?:/.test(file) ) {
       var buf = curl(file);
       render(buf, file);
