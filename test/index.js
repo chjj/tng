@@ -71,21 +71,23 @@ PNG.prototype.testOutput = function() {
   process.stdout.write(img + '\n');
 };
 
-function render(file) {
+function render(file, filename) {
   try {
     var img = PNG(file, {
       log: debug,
       ascii: argv.ascii,
-      optimization: argv.locpu ? 'cpu' : 'mem',
-      cellmapScale: argv.scale,
-      cellmapWidth: argv.width,
-      cellmapHeight: argv.height,
-      speed: argv.speed
+      optimization: argv.optimization,
+      scale: argv.scale,
+      width: argv.width,
+      height: argv.height,
+      speed: argv.speed,
+      filename: filename
     });
     img.testOutput();
   } catch (e) {
     console.log(e.stack + '');
   }
+  return img;
 }
 
 /**
@@ -119,6 +121,24 @@ function debug() {
   });
 
   return debug.stream.write(out, cb);
+}
+
+function curl(url) {
+  try {
+    return cp.execFileSync('curl',
+      ['-s', '-A', '', url],
+      { stdio: ['ignore', 'pipe', 'ignore'] });
+  } catch (e) {
+    ;
+  }
+  try {
+    return cp.execFileSync('wget',
+      ['-U', '', '-O', '-', url],
+      { stdio: ['ignore', 'pipe', 'ignore'] });
+  } catch (e) {
+    ;
+  }
+  throw new Error('curl or wget failed.');
 }
 
 /**
@@ -223,7 +243,13 @@ if (argv.all) {
     }
     if (!file) return;
     console.log(file);
-    render(file);
+    if (/^https?:/.test(file) ) {
+      var buf = curl(file);
+      render(buf, file);
+    } else {
+      // render(fs.readFileSync(file), file);
+      render(file);
+    }
     if (argv.feh) {
       try {
         cp.execSync('killall feh; feh -g 200x300 -Z ' + file, { stdio: 'ignore' });

@@ -31,14 +31,14 @@ var img = tng(process.env.HOME + '/helloworld.png', {
   optimization: 'mem',
   // add ascii characters for more detail (similar to libcaca):
   ascii: true,
-  // scale image to 20%:
-  cellmapScale: 0.20,
+  // scale cellmap to 20%:
+  scale: 0.20,
   // OR:
   // ensure a width of 30 cells, maintains aspect ratio:
-  // cellmapWidth: 30,
+  // width: 30,
   // OR:
   // ensure a height of 10 cells, maintains aspect ratio:
-  // cellmapHeight: 10
+  // height: 10
 });
 
 if (img.frames) {
