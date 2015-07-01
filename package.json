@@ -2,7 +2,7 @@
   "name": "tng",
   "description": "A full-featured PNG renderer for the terminal.",
   "author": "Christopher Jeffrey",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "./lib/tng.js",
   "bin": "./test/index.js",
   "preferGlobal": false,
